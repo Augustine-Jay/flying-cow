@@ -1,0 +1,29 @@
+{
+  "name": "developer-evaluator",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^4.7.0",
+    "@ant-design/pro-layout": "^7.21.1",
+    "antd": "^4.24.10",
+    "echarts": "^5.4.2",
+    "echarts-for-react": "^3.0.2",
+    "framer-motion": "^10.12.16",
+    "next": "12.3.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "@types/react": "^18.2.7",
+    "eslint": "8.41.0",
+    "eslint-config-next": "13.4.4",
+    "typescript": "^5.0.4"
+  }
+}

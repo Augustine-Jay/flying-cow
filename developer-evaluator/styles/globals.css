@@ -1,0 +1,114 @@
+@import "~antd/dist/antd.css";
+@import "~antd/dist/antd.css";
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #1f1f1f;
+  color: #fff;
+}
+
+.ant-layout {
+  background: #1f1f1f;
+}
+
+.ant-card {
+  background: #2c2c2c;
+  border-color: #3a3a3a;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.ant-card-head-title {
+  color: #00b96b;
+}
+
+.ant-table {
+  background: #2c2c2c;
+  color: #fff;
+}
+
+.ant-table-thead > tr > th {
+  background: #3a3a3a;
+  color: #00b96b;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #3a3a3a;
+}
+
+.ant-input {
+  background: #3a3a3a;
+  border-color: #4a4a4a;
+  color: #fff;
+}
+
+.ant-input:hover,
+.ant-input:focus {
+  border-color: #00b96b;
+}
+
+.ant-select-selector {
+  background: #3a3a3a !important;
+  border-color: #4a4a4a !important;
+  color: #fff !important;
+}
+
+.ant-select-arrow {
+  color: #00b96b;
+}
+
+.ant-select-dropdown {
+  background: #2c2c2c;
+}
+
+.ant-select-item {
+  color: #fff;
+}
+
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: #00b96b;
+}
+
+.ant-btn {
+  border-radius: 2rem;
+  transition: all 0.3s ease;
+}
+
+.ant-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 185, 107, 0.5);
+}
+
+.ant-btn:active {
+  transform: translateY(0);
+}
+
+.ant-spin-dot-item {
+  background-color: #00b96b;
+}
+
+.ant-spin-text {
+  color: #00b96b;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background-color: rgba(58, 58, 58, 0.7) !important;
+}
+
+:root {
+  --primary-color: #00b96b;
+  --border-radius: 8px;
+}
+
+.ant-btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  border-radius: var(--border-radius);
+}
