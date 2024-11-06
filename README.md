@@ -3,12 +3,12 @@
 
 1. 克隆项目仓库：
 
-   \`\`\`
-   git clone https://github.com/Augustine-Jay/flying-cow.git
-   cd developer-evaluator
+   \`\`\`  
+   git clone https://github.com/Augustine-Jay/flying-cow.git</br>
+   cd developer-evaluator </br> 
    \`\`\`
 
-2. 安装依赖：
+3. 安装依赖：
 
    \`\`\`
    npm install
@@ -20,7 +20,7 @@
    yarn install
    \`\`\`
 
-3. 运行开发服务器：
+4. 运行开发服务器：
 
    \`\`\`
    npm run dev
@@ -32,7 +32,7 @@
    yarn dev
    \`\`\`
 
-4. 在浏览器中打开 \`http://localhost:3000\` 查看应用。
+5. 在浏览器中打开 \`http://localhost:3000\` 查看应用。
 
 ## 使用说明
 
