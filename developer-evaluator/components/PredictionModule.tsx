@@ -1,4 +1,3 @@
-// components/PredictionModule.tsx
 import { useState } from "react";
 import { Input, Button, Typography, Spin, Modal } from "antd";
 import { motion } from "framer-motion";
@@ -24,7 +23,10 @@ export default function PredictionModule() {
     setLoading(true);
     setResult(null);
     try {
-      const response = await fetch(`API_ENDPOINT_FOR_PREDICTION?name=${name}`);
+      // API调用占位符
+      // 需要接收的数据: DeveloperResult
+      // API应该接受name作为参数，并返回预测结果
+      const response = await fetch(`/api/predict?name=${name}`);
       if (!response.ok) {
         throw new Error("Failed to fetch prediction");
       }
@@ -49,9 +51,10 @@ export default function PredictionModule() {
     setShowLowConfidenceModal(false);
     setLoading(true);
     try {
-      const response = await fetch(
-        `API_ENDPOINT_FOR_LOW_CONFIDENCE_PREDICTION?name=${name}`
-      );
+      // API调用占位符
+      // 需要接收的数据: DeveloperResult
+      // API应该接受name作为参数，并返回低置信度预测结果
+      const response = await fetch(`/api/predict-low-confidence?name=${name}`);
       if (!response.ok) {
         throw new Error("Failed to fetch low confidence prediction");
       }

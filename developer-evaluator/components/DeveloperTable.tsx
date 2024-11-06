@@ -1,55 +1,37 @@
-// components/DeveloperTable.tsx
 import { Table, Select, Button, Input, Space, Typography } from "antd";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/index";
+import { fetchDevelopers, setFilters } from "../store/developerSlice";
 
 const { Option } = Select;
 const { Title } = Typography;
 
 const domains = ["All", "3D", "Ajax", "Algorithm算法", "Amp"];
 
-interface Developer {
-  id: string;
-  name: string;
-  domain: string;
-  nationality: string;
-  rank: string;
-}
-
 export default function DeveloperTable() {
-  const [data, setData] = useState<Developer[]>([]);
-  const [filters, setFilters] = useState({
-    domain: "All",
-    nationality: "All",
-    name: "",
-  });
+  const dispatch = useDispatch<AppDispatch>();
+  const { developers, loading, filters } = useSelector(
+    (state: RootState) => state.developers
+  );
   const [nationalities, setNationalities] = useState<string[]>(["All"]);
 
   useEffect(() => {
-    fetchDevelopers();
+    dispatch(fetchDevelopers());
     fetchNationalities();
-  }, []);
-
-  const fetchDevelopers = async () => {
-    try {
-      const response = await fetch("API_ENDPOINT_FOR_DEVELOPERS");
-      if (!response.ok) {
-        throw new Error("Failed to fetch developers");
-      }
-      const developers = await response.json();
-      setData(developers);
-    } catch (error) {
-      console.error("Error fetching developers:", error);
-    }
-  };
+  }, [dispatch]);
 
   const fetchNationalities = async () => {
     try {
-      const response = await fetch("API_ENDPOINT_FOR_NATIONALITIES");
+      // API调用占位符
+      // 需要接收的数据: string[]
+      // API应该返回所有可用的国籍列表
+      const response = await fetch("/api/nationalities");
       if (!response.ok) {
         throw new Error("Failed to fetch nationalities");
       }
-      const fetchedNationalities = await response.json();
+      const fetchedNationalities: string[] = await response.json();
       setNationalities(["All", ...fetchedNationalities]);
     } catch (error) {
       console.error("Error fetching nationalities:", error);
@@ -80,19 +62,8 @@ export default function DeveloperTable() {
     },
   ];
 
-  const handleFilter = async () => {
-    try {
-      const response = await fetch(
-        `API_ENDPOINT_FOR_FILTERED_DEVELOPERS?domain=${filters.domain}&nationality=${filters.nationality}&name=${filters.name}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch filtered developers");
-      }
-      const filteredDevelopers = await response.json();
-      setData(filteredDevelopers);
-    } catch (error) {
-      console.error("Error fetching filtered developers:", error);
-    }
+  const handleFilter = () => {
+    dispatch(fetchDevelopers());
   };
 
   return (
@@ -112,7 +83,8 @@ export default function DeveloperTable() {
           <Select
             style={{ width: 200 }}
             placeholder="选择领域"
-            onChange={(value) => setFilters({ ...filters, domain: value })}
+            value={filters.domain}
+            onChange={(value) => dispatch(setFilters({ domain: value }))}
           >
             {domains.map((domain) => (
               <Option key={domain} value={domain}>
@@ -123,7 +95,8 @@ export default function DeveloperTable() {
           <Select
             style={{ width: 200 }}
             placeholder="选择国籍"
-            onChange={(value) => setFilters({ ...filters, nationality: value })}
+            value={filters.nationality}
+            onChange={(value) => dispatch(setFilters({ nationality: value }))}
           >
             {nationalities.map((nationality) => (
               <Option key={nationality} value={nationality}>
@@ -133,7 +106,8 @@ export default function DeveloperTable() {
           </Select>
           <Input
             placeholder="搜索开发者名称"
-            onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+            value={filters.name}
+            onChange={(e) => dispatch(setFilters({ name: e.target.value }))}
             style={{ width: 200 }}
           />
           <Button
@@ -160,7 +134,8 @@ export default function DeveloperTable() {
       >
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={developers}
+          loading={loading}
           style={{ background: "#2c2c2c", color: "#fff" }}
         />
       </motion.div>

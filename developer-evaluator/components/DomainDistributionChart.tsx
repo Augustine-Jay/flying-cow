@@ -1,4 +1,3 @@
-// components/DomainDistributionChart.tsx
 import { Typography } from "antd";
 import ReactECharts from "echarts-for-react";
 import { useState, useEffect } from "react";
@@ -21,11 +20,14 @@ export default function DomainDistributionChart() {
 
   const fetchDomainDistribution = async () => {
     try {
-      const response = await fetch("API_ENDPOINT_FOR_DOMAIN_DISTRIBUTION");
+      // API调用占位符
+      // 需要接收的数据: DomainDistribution[]
+      // API应该返回领域分布数据
+      const response = await fetch("/api/domain-distribution");
       if (!response.ok) {
         throw new Error("Failed to fetch domain distribution");
       }
-      const distribution = await response.json();
+      const distribution: DomainDistribution[] = await response.json();
       setDomainDistribution(distribution);
     } catch (error) {
       console.error("Error fetching domain distribution:", error);

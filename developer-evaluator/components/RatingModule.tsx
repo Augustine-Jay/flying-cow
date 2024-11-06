@@ -1,4 +1,3 @@
-// components/RatingModule.tsx
 import { useState } from "react";
 import { Input, Button, Typography, Spin } from "antd";
 import { motion } from "framer-motion";
@@ -22,11 +21,14 @@ export default function RatingModule() {
     setLoading(true);
     setResult(null);
     try {
-      const response = await fetch(`API_ENDPOINT_FOR_RATING?name=${name}`);
+      // API调用占位符
+      // 需要接收的数据: DeveloperResult
+      // API应该接受name作为参数，并返回开发者评级结果
+      const response = await fetch(`/api/rate?name=${name}`);
       if (!response.ok) {
         throw new Error("Failed to fetch rating");
       }
-      const ratingResult = await response.json();
+      const ratingResult: DeveloperResult = await response.json();
       setResult(ratingResult);
     } catch (error) {
       console.error("Error fetching rating:", error);
