@@ -1,9 +1,8 @@
 // components/PredictionModule.tsx
 import { useState } from "react";
-import { Input, Button, Typography, Spin } from "antd";
+import { Input, Button, Typography, Spin, Modal } from "antd";
 import { motion } from "framer-motion";
 import ReactECharts from "echarts-for-react";
-import { mockDeveloperData } from "../utils/mockData";
 
 const { Title, Text } = Typography;
 
@@ -17,45 +16,74 @@ export default function PredictionModule() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<DeveloperResult | null>(null);
+  const [showLowConfidenceModal, setShowLowConfidenceModal] = useState(false);
+  const [lowConfidenceResult, setLowConfidenceResult] =
+    useState<DeveloperResult | null>(null);
 
-  const handlePredict = () => {
+  const handlePredict = async () => {
     setLoading(true);
     setResult(null);
-    setTimeout(() => {
-      const developerData = mockDeveloperData[name];
-      if (developerData) {
-        setResult({
-          nationality: developerData.nationality,
-          confidence: developerData.confidence,
-          probabilities: developerData.probabilities,
-        });
-      } else {
-        setResult(null);
+    try {
+      const response = await fetch(`API_ENDPOINT_FOR_PREDICTION?name=${name}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch prediction");
       }
-      setLoading(false);
-    }, 2000);
+      const predictionResult: DeveloperResult = await response.json();
+
+      if (predictionResult.nationality) {
+        setResult(predictionResult);
+      } else if (predictionResult.confidence < 50) {
+        setLowConfidenceResult(predictionResult);
+        setShowLowConfidenceModal(true);
+      } else {
+        setResult(predictionResult);
+      }
+    } catch (error) {
+      console.error("Error fetching prediction:", error);
+      setResult(null);
+    }
+    setLoading(false);
+  };
+
+  const handleLowConfidencePrediction = async () => {
+    setShowLowConfidenceModal(false);
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `API_ENDPOINT_FOR_LOW_CONFIDENCE_PREDICTION?name=${name}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch low confidence prediction");
+      }
+      const predictionResult = await response.json();
+      setResult(predictionResult);
+    } catch (error) {
+      console.error("Error fetching low confidence prediction:", error);
+      setResult(null);
+    }
+    setLoading(false);
+  };
+
+  const handleCancelLowConfidencePrediction = () => {
+    setShowLowConfidenceModal(false);
+    setResult(lowConfidenceResult);
   };
 
   const option = {
     radar: {
-      indicator: [
-        { name: "China", max: 100 },
-        { name: "USA", max: 100 },
-        { name: "India", max: 100 },
-      ],
+      indicator: result
+        ? Object.keys(result.probabilities).map((key) => ({
+            name: key,
+            max: 100,
+          }))
+        : [],
     },
     series: [
       {
         type: "radar",
         data: [
           {
-            value: result
-              ? [
-                  result.probabilities.China,
-                  result.probabilities.USA,
-                  result.probabilities.India,
-                ]
-              : [],
+            value: result ? Object.values(result.probabilities) : [],
             name: "Nationality Probability",
           },
         ],
@@ -122,6 +150,16 @@ export default function PredictionModule() {
       {!result && !loading && name && (
         <Text style={{ color: "#ff4d4f" }}>未找到该开发者的数据</Text>
       )}
+      <Modal
+        title="低置信度预测"
+        visible={showLowConfidenceModal}
+        onOk={handleLowConfidencePrediction}
+        onCancel={handleCancelLowConfidencePrediction}
+        okText="继续预测"
+        cancelText="取消"
+      >
+        <p>置信度较低，是否继续预测？</p>
+      </Modal>
     </div>
   );
 }

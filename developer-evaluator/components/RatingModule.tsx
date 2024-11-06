@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Input, Button, Typography, Spin } from "antd";
 import { motion } from "framer-motion";
 import ReactECharts from "echarts-for-react";
-import { mockDeveloperData } from "../utils/mockData";
 
 const { Title, Text } = Typography;
 
@@ -19,23 +18,21 @@ export default function RatingModule() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<DeveloperResult | null>(null);
 
-  const handleRate = () => {
+  const handleRate = async () => {
     setLoading(true);
     setResult(null);
-    setTimeout(() => {
-      const developerData = mockDeveloperData[name];
-      if (developerData) {
-        setResult({
-          rank: Number(developerData.rank), // 将 rank 转换为数字类型
-          score: developerData.score,
-          projects: developerData.projects,
-          contributions: developerData.contributions,
-        });
-      } else {
-        setResult(null);
+    try {
+      const response = await fetch(`API_ENDPOINT_FOR_RATING?name=${name}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch rating");
       }
-      setLoading(false);
-    }, 2000);
+      const ratingResult = await response.json();
+      setResult(ratingResult);
+    } catch (error) {
+      console.error("Error fetching rating:", error);
+      setResult(null);
+    }
+    setLoading(false);
   };
 
   const option = {
@@ -150,7 +147,7 @@ export default function RatingModule() {
           borderRadius: "2rem",
           background: "#00b96b",
           border: "none",
-          boxShadow: "0 0 10px rgba(0,185,107,0.5)",
+          boxShadow: "0 0 10px  rgba(0,185,107,0.5)",
         }}
       >
         评估开发者

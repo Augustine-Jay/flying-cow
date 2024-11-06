@@ -14,7 +14,21 @@ export default function DeveloperDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 1500);
+    const fetchDashboardData = async () => {
+      try {
+        const response = await fetch("API_ENDPOINT_FOR_DASHBOARD_DATA");
+        if (!response.ok) {
+          throw new Error("Failed to fetch dashboard data");
+        }
+        await response.json(); // Process the data if needed
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
   }, []);
 
   if (loading) {

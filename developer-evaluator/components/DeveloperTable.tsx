@@ -1,22 +1,60 @@
 // components/DeveloperTable.tsx
 import { Table, Select, Button, Input, Space, Typography } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { mockDeveloperData } from "../utils/mockData";
 
 const { Option } = Select;
 const { Title } = Typography;
 
-const domains = ["All", "3D", "AjaxAlgorithm算法", "Amp"];
-const nationalities = ["All", "USA", "China", "India"];
+const domains = ["All", "3D", "Ajax", "Algorithm算法", "Amp"];
+
+interface Developer {
+  id: string;
+  name: string;
+  domain: string;
+  nationality: string;
+  rank: string;
+}
 
 export default function DeveloperTable() {
-  const [data, setData] = useState(Object.values(mockDeveloperData));
+  const [data, setData] = useState<Developer[]>([]);
   const [filters, setFilters] = useState({
     domain: "All",
     nationality: "All",
     name: "",
   });
+  const [nationalities, setNationalities] = useState<string[]>(["All"]);
+
+  useEffect(() => {
+    fetchDevelopers();
+    fetchNationalities();
+  }, []);
+
+  const fetchDevelopers = async () => {
+    try {
+      const response = await fetch("API_ENDPOINT_FOR_DEVELOPERS");
+      if (!response.ok) {
+        throw new Error("Failed to fetch developers");
+      }
+      const developers = await response.json();
+      setData(developers);
+    } catch (error) {
+      console.error("Error fetching developers:", error);
+    }
+  };
+
+  const fetchNationalities = async () => {
+    try {
+      const response = await fetch("API_ENDPOINT_FOR_NATIONALITIES");
+      if (!response.ok) {
+        throw new Error("Failed to fetch nationalities");
+      }
+      const fetchedNationalities = await response.json();
+      setNationalities(["All", ...fetchedNationalities]);
+    } catch (error) {
+      console.error("Error fetching nationalities:", error);
+    }
+  };
 
   const columns = [
     {
@@ -33,6 +71,7 @@ export default function DeveloperTable() {
       title: "国籍",
       dataIndex: "nationality",
       key: "nationality",
+      render: (nationality: string) => nationality || "-",
     },
     {
       title: "评级",
@@ -41,24 +80,19 @@ export default function DeveloperTable() {
     },
   ];
 
-  const handleFilter = () => {
-    let filteredData = Object.values(mockDeveloperData);
-    if (filters.domain !== "All") {
-      filteredData = filteredData.filter(
-        (item) => item.domain === filters.domain
+  const handleFilter = async () => {
+    try {
+      const response = await fetch(
+        `API_ENDPOINT_FOR_FILTERED_DEVELOPERS?domain=${filters.domain}&nationality=${filters.nationality}&name=${filters.name}`
       );
+      if (!response.ok) {
+        throw new Error("Failed to fetch filtered developers");
+      }
+      const filteredDevelopers = await response.json();
+      setData(filteredDevelopers);
+    } catch (error) {
+      console.error("Error fetching filtered developers:", error);
     }
-    if (filters.nationality !== "All") {
-      filteredData = filteredData.filter(
-        (item) => item.nationality === filters.nationality
-      );
-    }
-    if (filters.name) {
-      filteredData = filteredData.filter((item) =>
-        item.name.toLowerCase().includes(filters.name.toLowerCase())
-      );
-    }
-    setData(filteredData);
   };
 
   return (
@@ -120,7 +154,6 @@ export default function DeveloperTable() {
         initial={{ opacity: 0, y: 20 }}
         animate={{
           opacity: 1,
-
           y: 0,
         }}
         transition={{ delay: 0.2 }}

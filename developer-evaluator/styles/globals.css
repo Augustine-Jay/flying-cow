@@ -110,6 +110,5 @@ body {
 .ant-btn-primary {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
-  border-radius: var(--border-radius); 
+  border-radius: var(--border-radius);
 }
-/*1111*
