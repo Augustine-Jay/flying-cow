@@ -1,6 +1,6 @@
+import React, { useState, useEffect } from "react";
 import { Typography } from "antd";
 import ReactECharts from "echarts-for-react";
-import { useState, useEffect } from "react";
 
 const { Title } = Typography;
 
@@ -15,24 +15,20 @@ export default function DomainDistributionChart() {
   >([]);
 
   useEffect(() => {
+    // Simulating API call
+    const fetchDomainDistribution = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const distribution: DomainDistribution[] = [
+        { name: "3D", value: 30 },
+        { name: "Ajax", value: 25 },
+        { name: "Algorithm", value: 20 },
+        { name: "Amp", value: 25 },
+      ];
+      setDomainDistribution(distribution);
+    };
+
     fetchDomainDistribution();
   }, []);
-
-  const fetchDomainDistribution = async () => {
-    try {
-      // API调用占位符
-      // 需要接收的数据: DomainDistribution[]
-      // API应该返回领域分布数据
-      const response = await fetch("/api/domain-distribution");
-      if (!response.ok) {
-        throw new Error("Failed to fetch domain distribution");
-      }
-      const distribution: DomainDistribution[] = await response.json();
-      setDomainDistribution(distribution);
-    } catch (error) {
-      console.error("Error fetching domain distribution:", error);
-    }
-  };
 
   const option = {
     tooltip: {
@@ -89,3 +85,23 @@ export default function DomainDistributionChart() {
     </div>
   );
 }
+
+// Commented out API call
+/*
+useEffect(() => {
+  const fetchDomainDistribution = async () => {
+    try {
+      const response = await fetch("/api/domain-distribution");
+      if (!response.ok) {
+        throw new Error("Failed to fetch domain distribution");
+      }
+      const distribution: DomainDistribution[] = await response.json();
+      setDomainDistribution(distribution);
+    } catch (error) {
+      console.error("Error fetching domain distribution:", error);
+    }
+  };
+
+  fetchDomainDistribution();
+}, []);
+*/

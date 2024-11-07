@@ -1,7 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Input, Button, Typography, Spin } from "antd";
 import { motion } from "framer-motion";
 import ReactECharts from "echarts-for-react";
+import debounce from "lodash/debounce";
 
 const { Title, Text } = Typography;
 
@@ -21,14 +22,14 @@ export default function RatingModule() {
     setLoading(true);
     setResult(null);
     try {
-      // API调用占位符
-      // 需要接收的数据: DeveloperResult
-      // API应该接受name作为参数，并返回开发者评级结果
-      const response = await fetch(`/api/rate?name=${name}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch rating");
-      }
-      const ratingResult: DeveloperResult = await response.json();
+      // Simulating API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const ratingResult: DeveloperResult = {
+        rank: 42,
+        score: 78,
+        projects: 15,
+        contributions: 237,
+      };
       setResult(ratingResult);
     } catch (error) {
       console.error("Error fetching rating:", error);
@@ -36,6 +37,8 @@ export default function RatingModule() {
     }
     setLoading(false);
   };
+
+  const debouncedHandleRate = debounce(handleRate, 300);
 
   const option = {
     series: [
@@ -142,14 +145,14 @@ export default function RatingModule() {
       />
       <Button
         type="primary"
-        onClick={handleRate}
+        onClick={debouncedHandleRate}
         disabled={!name || loading}
         style={{
           marginBottom: 16,
           borderRadius: "2rem",
           background: "#00b96b",
           border: "none",
-          boxShadow: "0 0 10px  rgba(0,185,107,0.5)",
+          boxShadow: "0 0 10px rgba(0,185,107,0.5)",
         }}
       >
         评估开发者
@@ -185,3 +188,23 @@ export default function RatingModule() {
     </div>
   );
 }
+
+// Commented out API call
+/*
+const handleRate = async () => {
+  setLoading(true);
+  setResult(null);
+  try {
+    const response = await fetch(`/api/rate?name=${name}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch rating");
+    }
+    const ratingResult: DeveloperResult = await response.json();
+    setResult(ratingResult);
+  } catch (error) {
+    console.error("Error fetching rating:", error);
+    setResult(null);
+  }
+  setLoading(false);
+};
+*/

@@ -1,5 +1,12 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Developer } from "../types";
+
+interface Developer {
+  id: number;
+  name: string;
+  domain: string;
+  nationality: string;
+  rank: number;
+}
 
 interface DeveloperState {
   developers: Developer[];
@@ -29,20 +36,19 @@ export const fetchDevelopers = createAsyncThunk(
     const { filters } = (getState() as { developers: DeveloperState })
       .developers;
     try {
-      // API调用占位符
-      // 需要接收的数据: Developer[]
-      // API应该接受filters作为参数，并返回过滤后的开发者列表
-      const response = await fetch("/api/developers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(filters),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch developers");
-      }
-      const data: Developer[] = await response.json();
+      // Simulating API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const data: Developer[] = Array.from({ length: 100 }, (_, i) => ({
+        id: i + 1,
+        name: `Developer ${i + 1}`,
+        domain: ["3D", "Ajax", "Algorithm", "Amp"][
+          Math.floor(Math.random() * 4)
+        ],
+        nationality: ["China", "America", "Japan", "England", "Russia"][
+          Math.floor(Math.random() * 5)
+        ],
+        rank: Math.floor(Math.random() * 100) + 1,
+      }));
       return data;
     } catch (error) {
       return rejectWithValue("Failed to fetch developers");
@@ -65,10 +71,12 @@ const developerSlice = createSlice({
     builder
       .addCase(fetchDevelopers.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchDevelopers.fulfilled, (state, action) => {
         state.loading = false;
         state.developers = action.payload;
+        state.error = null;
       })
       .addCase(fetchDevelopers.rejected, (state, action) => {
         state.loading = false;
@@ -79,3 +87,29 @@ const developerSlice = createSlice({
 
 export const { setFilters } = developerSlice.actions;
 export default developerSlice.reducer;
+
+// Commented out API call
+/*
+export const fetchDevelopers = createAsyncThunk(
+  "developers/fetchDevelopers",
+  async (_, { getState, rejectWithValue }) => {
+    const { filters } = (getState() as { developers: DeveloperState }).developers;
+    try {
+      const response = await fetch("/api/developers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(filters),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch developers");
+      }
+      const data: Developer[] = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue("Failed to fetch developers");
+    }
+  }
+);
+*/

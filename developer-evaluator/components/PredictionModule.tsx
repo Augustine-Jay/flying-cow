@@ -1,7 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Input, Button, Typography, Spin, Modal } from "antd";
 import { motion } from "framer-motion";
 import ReactECharts from "echarts-for-react";
+import debounce from "lodash/debounce";
 
 const { Title, Text } = Typography;
 
@@ -23,14 +24,19 @@ export default function PredictionModule() {
     setLoading(true);
     setResult(null);
     try {
-      // API调用占位符
-      // 需要接收的数据: DeveloperResult
-      // API应该接受name作为参数，并返回预测结果
-      const response = await fetch(`/api/predict?name=${name}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch prediction");
-      }
-      const predictionResult: DeveloperResult = await response.json();
+      // Simulating API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const predictionResult: DeveloperResult = {
+        nationality: "China",
+        confidence: 85,
+        probabilities: {
+          China: 85,
+          America: 10,
+          Japan: 3,
+          England: 1,
+          Russia: 1,
+        },
+      };
 
       if (predictionResult.nationality) {
         setResult(predictionResult);
@@ -47,18 +53,25 @@ export default function PredictionModule() {
     setLoading(false);
   };
 
+  const debouncedHandlePredict = debounce(handlePredict, 300);
+
   const handleLowConfidencePrediction = async () => {
     setShowLowConfidenceModal(false);
     setLoading(true);
     try {
-      // API调用占位符
-      // 需要接收的数据: DeveloperResult
-      // API应该接受name作为参数，并返回低置信度预测结果
-      const response = await fetch(`/api/predict-low-confidence?name=${name}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch low confidence prediction");
-      }
-      const predictionResult = await response.json();
+      // Simulating API call for low confidence prediction
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const predictionResult: DeveloperResult = {
+        nationality: "Unknown",
+        confidence: 30,
+        probabilities: {
+          China: 30,
+          America: 25,
+          Japan: 20,
+          England: 15,
+          Russia: 10,
+        },
+      };
       setResult(predictionResult);
     } catch (error) {
       console.error("Error fetching low confidence prediction:", error);
@@ -67,29 +80,51 @@ export default function PredictionModule() {
     setLoading(false);
   };
 
+  const debouncedHandleLowConfidencePrediction = debounce(
+    handleLowConfidencePrediction,
+    300
+  );
+
   const handleCancelLowConfidencePrediction = () => {
     setShowLowConfidenceModal(false);
     setResult(lowConfidenceResult);
   };
 
   const option = {
-    radar: {
-      indicator: result
-        ? Object.keys(result.probabilities).map((key) => ({
-            name: key,
-            max: 100,
-          }))
-        : [],
+    tooltip: {
+      trigger: "item",
     },
     series: [
       {
-        type: "radar",
-        data: [
-          {
-            value: result ? Object.values(result.probabilities) : [],
-            name: "Nationality Probability",
+        name: "Nationality Probability",
+        type: "pie",
+        radius: ["40%", "70%"],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: "#fff",
+          borderWidth: 2,
+        },
+        label: {
+          show: false,
+          position: "center",
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: "40",
+            fontWeight: "bold",
           },
-        ],
+        },
+        labelLine: {
+          show: false,
+        },
+        data: result
+          ? Object.entries(result.probabilities).map(([name, value]) => ({
+              name,
+              value,
+            }))
+          : [],
       },
     ],
   };
@@ -114,7 +149,7 @@ export default function PredictionModule() {
       />
       <Button
         type="primary"
-        onClick={handlePredict}
+        onClick={debouncedHandlePredict}
         disabled={!name || loading}
         style={{
           marginBottom: 16,
@@ -156,7 +191,7 @@ export default function PredictionModule() {
       <Modal
         title="低置信度预测"
         visible={showLowConfidenceModal}
-        onOk={handleLowConfidencePrediction}
+        onOk={debouncedHandleLowConfidencePrediction}
         onCancel={handleCancelLowConfidencePrediction}
         okText="继续预测"
         cancelText="取消"
@@ -166,3 +201,48 @@ export default function PredictionModule() {
     </div>
   );
 }
+
+// Commented out API call
+/*
+const handlePredict = async () => {
+  setLoading(true);
+  setResult(null);
+  try {
+    const response = await fetch(`/api/predict?name=${name}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch prediction");
+    }
+    const predictionResult: DeveloperResult = await response.json();
+
+    if (predictionResult.nationality) {
+      setResult(predictionResult);
+    } else if (predictionResult.confidence < 50) {
+      setLowConfidenceResult(predictionResult);
+      setShowLowConfidenceModal(true);
+    } else {
+      setResult(predictionResult);
+    }
+  } catch (error) {
+    console.error("Error fetching prediction:", error);
+    setResult(null);
+  }
+  setLoading(false);
+};
+
+const handleLowConfidencePrediction = async () => {
+  setShowLowConfidenceModal(false);
+  setLoading(true);
+  try {
+    const response = await fetch(`/api/predict-low-confidence?name=${name}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch low confidence prediction");
+    }
+    const predictionResult = await response.json();
+    setResult(predictionResult);
+  } catch (error) {
+    console.error("Error fetching low confidence prediction:", error);
+    setResult(null);
+  }
+  setLoading(false);
+};
+*/

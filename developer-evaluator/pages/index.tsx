@@ -1,4 +1,3 @@
-// pages/index.tsx
 import { useState } from "react";
 import { Button, Typography } from "antd";
 import { motion } from "framer-motion";
@@ -24,7 +23,6 @@ export default function Home() {
         alignItems: "center",
         justifyContent: "center",
         height: "calc(100vh - 48px)",
-
         background: "linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%)",
       }}
     >
